@@ -2,5 +2,5 @@ __pycache__
 .git
 .ipynb_checkpoints
 .vscode
-# retina_v1_best.pth
-# yolov8x_best.pt
+retina_v1_best.pth
+yolov8x_best.pt
