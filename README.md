@@ -1,3 +1,5 @@
+<img src="https://user-images.githubusercontent.com/6449473/216763434-a629d98e-7cbc-4ec1-b87e-194ab7272e7d.png">
+
 <pre>
 [1. API 실행]
 python pred_api.py
