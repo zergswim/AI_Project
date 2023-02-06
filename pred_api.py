@@ -35,55 +35,57 @@ def read_root():
     # image_name: str
     # score_limit: Optional[float] = 0.5
 
-@app.post("/pred_retina", description="Retina v1 모델 예측")
-# async def get_pred(files: List[UploadFile] = File(...)):
-async def get_pred_retina(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
+# 레티나버전은 토치비전 업데이트 필요예상 or fpn_v2 요구
+# @app.post("/pred_retina", description="Retina v1 모델 예측")
+# # async def get_pred(files: List[UploadFile] = File(...)):
+# async def get_pred_retina(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
 
-    #Retina v1(torchvision)
-    model_retina = torchvision.models.detection.retinanet_resnet50_fpn(num_classes = 65, pretrained=False, pretrained_backbone = True)
-    model_retina.to(device)
+#     #Retina v1(torchvision)
+#     # model_retina = torchvision.models.detection.retinanet_resnet50_fpn_v2(num_classes = 65, pretrained=False, pretrained_backbone = True)
+#     model_retina = torchvision.models.detection.retinanet_resnet50_fpn(num_classes = 65, pretrained=False, pretrained_backbone = True)
+#     model_retina.to(device)
 
-    checkpoint = torch.load('retina_v1_best.pth', map_location=device)
-    # state_dict = checkpoint.state_dict()
-    model_retina.load_state_dict(checkpoint)
-    model_retina.eval()
-    print("RetinaNet_v1 model loaded") 
+#     checkpoint = torch.load('retina_v1_best.pth', map_location=device)
+#     # state_dict = checkpoint.state_dict()
+#     model_retina.load_state_dict(checkpoint)
+#     model_retina.eval()
+#     print("RetinaNet_v1 model loaded") 
 
-    # print(score_limit)
-    file.filename = f"./upload/{uuid4()}.jpg"
-    contents = await file.read() # <-- Important!
+#     # print(score_limit)
+#     file.filename = f"./upload/{uuid4()}.jpg"
+#     contents = await file.read() # <-- Important!
 
-    # example of how you can save the file
-    with open(file.filename, "wb") as f:
-        f.write(contents)
+#     # example of how you can save the file
+#     with open(file.filename, "wb") as f:
+#         f.write(contents)
 
-    image = Image.open(file.filename)
-    image = np.array(image)
-    # print(img.shape)
+#     image = Image.open(file.filename)
+#     image = np.array(image)
+#     # print(img.shape)
 
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
-    image /= 255.0
-    image = torch.tensor(image).permute(2,0,1)
-    image = image.unsqueeze(dim=0)
-    image = image.float().to(device)
+#     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
+#     image /= 255.0
+#     image = torch.tensor(image).permute(2,0,1)
+#     image = image.unsqueeze(dim=0)
+#     image = image.float().to(device)
 
-    outputs = model_retina(image)
-    boxes = outputs[0]['boxes'].int().detach().numpy().tolist()
-    scores = outputs[0]['scores'].detach().numpy().tolist()
-    labels = outputs[0]['labels'].detach().numpy().tolist()
-    rtn_boxes = []
-    rtn_labels = []
+#     outputs = model_retina(image)
+#     boxes = outputs[0]['boxes'].int().detach().numpy().tolist()
+#     scores = outputs[0]['scores'].detach().numpy().tolist()
+#     labels = outputs[0]['labels'].detach().numpy().tolist()
+#     rtn_boxes = []
+#     rtn_labels = []
 
-    for idx, score in enumerate(scores):
-        if score > score_limit:
-            rtn_boxes.append(boxes[idx])
-            rtn_labels.append(labels[idx])
+#     for idx, score in enumerate(scores):
+#         if score > score_limit:
+#             rtn_boxes.append(boxes[idx])
+#             rtn_labels.append(labels[idx])
 
-    return {'boxes':rtn_boxes, 'labels':rtn_labels}
+#     return {'boxes':rtn_boxes, 'labels':rtn_labels}
 
 @app.post("/pred_yolon", description="YOLO v8 모델(n) 예측")
 # async def get_pred(files: List[UploadFile] = File(...)):
-async def get_pred_yolo(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
+async def get_pred_yolon(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
 
     # model_yolo = YOLO("yolov8n.yaml").to(device)
     model_yolo = YOLO("yolov8n_best.pt")
@@ -131,7 +133,7 @@ async def get_pred_yolo(file: UploadFile = File(...), score_limit: Optional[floa
     return {'boxes':rtn_boxes, 'labels':rtn_labels}
 
 @app.post("/pred_yolom", description="YOLO v8 모델(m) 예측")
-async def get_pred_yolo(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
+async def get_pred_yolom(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
 
     # model_yolo = YOLO("yolov8m.yaml").to(device)
     model_yolo = YOLO("yolov8m_best.pt")
@@ -171,7 +173,7 @@ async def get_pred_yolo(file: UploadFile = File(...), score_limit: Optional[floa
     return {'boxes':rtn_boxes, 'labels':rtn_labels}
 
 @app.post("/pred_yolox", description="YOLO v8 모델(x) 예측")
-async def get_pred_yolo(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
+async def get_pred_yolox(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
 
     # model_yolo = YOLO("yolov8x.yaml").to(device)
     model_yolo = YOLO("yolov8x_best.pt")

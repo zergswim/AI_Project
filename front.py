@@ -15,7 +15,8 @@ import requests
 def main():
     st.title("Optical braille recognition Project")
 
-    model = st.radio("Choose a model : ", ('yolo-n', 'yolo-m', 'yolo-x', 'retina'), horizontal=True)
+    model = st.radio("Choose a model : ", ('yolo-n', 'yolo-m', 'yolo-x'), horizontal=True)
+    # model = st.radio("Choose a model : ", ('yolo-n', 'yolo-m', 'yolo-x', 'retina'), horizontal=True)
 
     uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg","png"])
 
@@ -35,12 +36,12 @@ def main():
         file = [('file', (uploaded_file.name, image_bytes, uploaded_file.type))]
         if model == 'yolo-n':
             response = requests.post("http://localhost:30001/pred_yolon", files=file, params=params)
-        elif model == 'yolo-m-best':
+        elif model == 'yolo-m':
             response = requests.post("http://localhost:30001/pred_yolom", files=file, params=params)
         elif model == 'yolo-x':
             response = requests.post("http://localhost:30001/pred_yolox", files=file, params=params)
-        else:
-            response = requests.post("http://localhost:30001/pred_retina", files=file, params=params)
+        # else:
+        #     response = requests.post("http://localhost:30001/pred_retina", files=file, params=params)
 
         boxes = response.json()["boxes"]
         labels = response.json()["labels"]
