@@ -65,12 +65,14 @@ def main():
                 img = cv2.putText(img, str(lbl) , (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,0,255), 1)
             elif lbl_type=="braille":
                 pil_image = Image.fromarray(img)
+                # font = ImageFont.load_default()
                 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf", 20)
                 draw = ImageDraw.Draw(pil_image)
                 draw.text((int(x1), int(y1)), chr(10240+lbl), font=font, fill=(255,0,0,255))
                 img = np.array(pil_image)
             else:
                 pil_image = Image.fromarray(img)
+                # font = ImageFont.load_default()
                 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf", 18)
                 draw = ImageDraw.Draw(pil_image)
                 engchar = braille2engchar(chr(10240+lbl))

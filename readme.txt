@@ -2,6 +2,7 @@
 apt-get install git-lfs
 #git lfs install
 git clone https://github.com/zergswim/boostcamp_proj_fin.git
+apt install fontconfig
 
 apt-get update
 apt install libgl1-mesa-glx
