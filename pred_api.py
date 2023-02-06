@@ -35,7 +35,7 @@ def read_root():
     # image_name: str
     # score_limit: Optional[float] = 0.5
 
-# 레티나버전은 토치비전 업데이트 필요예상 or fpn_v2 요구
+# 레티나버전은 토치비전 업데이트(0.14) 필요예상 or fpn_v2 요구
 # @app.post("/pred_retina", description="Retina v1 모델 예측")
 # # async def get_pred(files: List[UploadFile] = File(...)):
 # async def get_pred_retina(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
@@ -89,6 +89,7 @@ async def get_pred_yolon(file: UploadFile = File(...), score_limit: Optional[flo
 
     # model_yolo = YOLO("yolov8n.yaml").to(device)
     model_yolo = YOLO("yolov8n_best.pt")
+    model_yolo.to(device)
     print("YOLOn_v8 model loaded")
 
     # print(score_limit)
@@ -137,6 +138,7 @@ async def get_pred_yolom(file: UploadFile = File(...), score_limit: Optional[flo
 
     # model_yolo = YOLO("yolov8m.yaml").to(device)
     model_yolo = YOLO("yolov8m_best.pt")
+    model_yolo.to(device)
     print("YOLOm_v8 model loaded")
 
     file.filename = f"./upload/{uuid4()}.jpg"
@@ -177,6 +179,7 @@ async def get_pred_yolox(file: UploadFile = File(...), score_limit: Optional[flo
 
     # model_yolo = YOLO("yolov8x.yaml").to(device)
     model_yolo = YOLO("yolov8x_best.pt")
+    model_yolo.to(device)
     print("YOLOx_v8 model loaded")
 
     file.filename = f"./upload/{uuid4()}.jpg"
