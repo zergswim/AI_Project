@@ -113,7 +113,7 @@ async def get_pred_yolon(file: UploadFile = File(...), score_limit: Optional[flo
     # image = image.unsqueeze(dim=0)
     # image = image.float().to(device)
 
-    outputs = model_yolo.predict(source=image)
+    outputs = model_yolo.predict(source=image, device="cpu", visualize=False)
     # outputs = model_yolo(image)
     # print('outputs:', outputs)
 
@@ -156,7 +156,7 @@ async def get_pred_yolom(file: UploadFile = File(...), score_limit: Optional[flo
     # image = image.unsqueeze(dim=0)
     # image = image.float().to(device)
 
-    outputs = model_yolo.predict(source=image, visualize=False)
+    outputs = model_yolo.predict(source=image, device="cpu", visualize=False)
     # outputs = model_yolo(image)
     # print('outputs:', outputs)
 
@@ -197,7 +197,7 @@ async def get_pred_yolox(file: UploadFile = File(...), score_limit: Optional[flo
     # image = image.unsqueeze(dim=0)
     # image = image.float().to(device)
 
-    outputs = model_yolo.predict(source=image, visualize=False)
+    outputs = model_yolo.predict(source=image, device="cpu", visualize=False)
     # outputs = model_yolo(image)
     # print('outputs:', outputs)
 
