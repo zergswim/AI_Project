@@ -3,13 +3,13 @@
 from ultralytics import YOLO
 
 # Load a model0
-model = YOLO("yolov8m.yaml")  # build a new model from scratch
-model = YOLO("yolov8m.pt")  # load a pretrained model (recommended for training)
+# model = YOLO("yolov8m.yaml")  # build a new model from scratch
+# model = YOLO("yolov8m.pt")  # load a pretrained model (recommended for training)
 
 # model = YOLO("yolov8x.yaml")  # build a new model from scratch
 # model = YOLO("yolov8x.pt")  # load a pretrained model (recommended for training)
 
-# model = YOLO("/opt/ml/fastapi/yolov8m_best.pt")  # load a pretrained model (recommended for training)
+model = YOLO("/opt/ml/fastapi/yolov8m_best.pt")  # load a pretrained model (recommended for training)
 # model = YOLO("/opt/ml/runs/detect/train20/weights/last.pt")  # load a pretrained model (recommended for training)
 # model = YOLO("/opt/ml/runs/detect/train/weights/best.pt")  # load a pretrained model (recommended for training)
 # model = YOLO("/opt/ml/runs/detect/train9/weights/best.pt")  # load a pretrained model (recommended for training)

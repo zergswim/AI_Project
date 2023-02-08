@@ -6,6 +6,9 @@ from typing import List, Optional
 import numpy as np
 import matplotlib.pyplot as plt
 
+#!pip install ensemble_boxes
+from ensemble_boxes import *
+
 from PIL import Image
 import cv2
 # # import requests
@@ -211,6 +214,79 @@ async def get_pred_yolox(file: UploadFile = File(...), score_limit: Optional[flo
     for idx, score in enumerate(scores):
         if score > score_limit:
             rtn_boxes.append(boxes[idx])
+            rtn_labels.append(int(labels[idx]))
+
+    return {'boxes':rtn_boxes, 'labels':rtn_labels}
+
+@app.post("/pred_yolonms", description="YOLO v8 (n,m,x nms) 예측")
+async def get_pred_yolonms(file: UploadFile = File(...), score_limit: Optional[float] = 0.5):
+
+    model_yolon = YOLO("yolov8n_best.pt")
+    model_yolom = YOLO("yolov8m_best.pt")
+    model_yolox = YOLO("yolov8x_best.pt")
+
+    file.filename = f"./upload/{uuid4()}.jpg"
+    contents = await file.read()
+
+    with open(file.filename, "wb") as f:
+        f.write(contents)
+        
+    image = Image.open(file.filename)
+    image = np.array(image)
+
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
+    # image /= 255.0
+    # image = torch.tensor(image).permute(2,0,1)
+    # image = image.unsqueeze(dim=0)
+    # image = image.float().to(device)
+
+    output_n = model_yolon.predict(source=image, device="cpu", visualize=False)
+    output_m = model_yolom.predict(source=image, device="cpu", visualize=False)
+    output_x = model_yolox.predict(source=image, device="cpu", visualize=False)
+    # outputs = model_yolo(image)
+    # print('outputs:', outputs)
+
+    boxes_list, scores_list, labels_list = [], [], []
+
+    boxes_list.append(output_n[0].boxes.xyxyn.numpy().tolist())
+    boxes_list.append(output_m[0].boxes.xyxyn.numpy().tolist())
+    boxes_list.append(output_x[0].boxes.xyxyn.numpy().tolist())
+
+    scores_list.append(output_n[0].boxes.conf.numpy().tolist())
+    scores_list.append(output_m[0].boxes.conf.numpy().tolist())
+    scores_list.append(output_x[0].boxes.conf.numpy().tolist())
+
+    labels_list.append(output_n[0].boxes.cls.numpy().tolist())
+    labels_list.append(output_m[0].boxes.cls.numpy().tolist())
+    labels_list.append(output_x[0].boxes.cls.numpy().tolist())
+
+    # print(image.shape)
+    # print(boxes_list)
+    # print(scores_list)
+    # print(labels_list)
+
+    boxes, scores, labels = nms(boxes_list, scores_list, labels_list, iou_thr=0.6)
+    # boxes, scores, labels = weighted_boxes_fusion(boxes_list, scores_list, labels_list, iou_thr=0.6, skip_box_thr=0.0001)
+
+    h, w, c = image.shape
+    # print(w, h, c)
+    boxes_origin = []
+    for box in boxes.tolist():
+        boxes_origin.append([box[0]*w, box[1]*h, box[2]*w, box[3]*h])
+
+    scores = scores.tolist()
+    labels = labels.tolist()
+
+    # print(boxes_origin)
+    # print(scores)
+    # print(labels)
+
+    rtn_boxes = []
+    rtn_labels = []
+
+    for idx, score in enumerate(scores):
+        if score > score_limit:
+            rtn_boxes.append(boxes_origin[idx])
             rtn_labels.append(int(labels[idx]))
 
     return {'boxes':rtn_boxes, 'labels':rtn_labels}

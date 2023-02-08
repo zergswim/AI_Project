@@ -14,6 +14,8 @@ pip install python-multipart
 pip install streamlit
 pip install jinja2==3.0.1
 
+pip install ensemble_boxes
+
 [1. API 실행]
 python pred_api.py
 http://49.50.167.222:30001
